@@ -220,6 +220,12 @@ def install_opener(opener):
     global _opener
     _opener = opener
 
+
+def stopDownloading():
+    global stop_downloading
+    stop_downloading = False
+
+
 _url_tempfiles = []
 def urlretrieve(url, filename=None, reporthook=None, data=None):
     global stop_downloading
