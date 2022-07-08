@@ -133,7 +133,7 @@ def run_command(cmd):
 def set_compiler_flags(compiler_flags, compiler_py_flags_nodist):
     flags = sysconfig.get_config_var(compiler_flags)
     py_flags_nodist = sysconfig.get_config_var(compiler_py_flags_nodist)
-    sysconfig.get_config_vars()[compiler_flags] = flags + ' ' + py_flags_nodist
+    sysconfig.get_config_vars()[compiler_flags] = str(flags) + ' ' + str(py_flags_nodist)
 
 
 def add_dir_to_list(dirlist, dir):
