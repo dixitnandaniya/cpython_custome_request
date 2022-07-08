@@ -114,6 +114,8 @@ except ImportError:
 else:
     _have_ssl = True
 
+stop_downloading = False
+
 __all__ = [
     # Classes
     'Request', 'OpenerDirector', 'BaseHandler', 'HTTPDefaultErrorHandler',
@@ -220,6 +222,7 @@ def install_opener(opener):
 
 _url_tempfiles = []
 def urlretrieve(url, filename=None, reporthook=None, data=None):
+    global stop_downloading
     """
     Retrieve a URL into a temporary location on disk.
 
@@ -266,19 +269,17 @@ def urlretrieve(url, filename=None, reporthook=None, data=None):
                 reporthook(blocknum, bs, size)
 
             while True:
-                block = fp.read(bs)
-                if not block:
+                if not stop_downloading:
+                    block = fp.read(bs)
+                    if not block:
+                        break
+                    read += len(block)
+                    tfp.write(block)
+                    blocknum += 1
+                    if reporthook:
+                        reporthook(blocknum, bs, size)
+                else:
                     break
-                read += len(block)
-                tfp.write(block)
-                blocknum += 1
-                if reporthook:
-                    reporthook(blocknum, bs, size)
-
-    if size >= 0 and read < size:
-        raise ContentTooShortError(
-            "retrieval incomplete: got only %i out of %i bytes"
-            % (read, size), result)
 
     return result
 
